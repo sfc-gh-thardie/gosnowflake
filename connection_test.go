@@ -109,7 +109,7 @@ func TestServiceName(t *testing.T) {
 
 	expectServiceName := serviceNameStub
 	for i := 0; i < 5; i++ {
-		sc.exec(context.TODO(), "", false, false, nil)
+		sc.exec(context.TODO(), "", false, false, false, nil)
 		if actualServiceName, ok := sc.cfg.Params[serviceName]; ok {
 			if *actualServiceName != expectServiceName {
 				t.Errorf("service name mis-match. expected %v, actual %v", expectServiceName, actualServiceName)
