@@ -353,9 +353,7 @@ func authenticate(
 	}
 	if !respd.Success {
 		logger.Errorln("Authentication FAILED")
-		sc.rest.Token = ""
-		sc.rest.MasterToken = ""
-		sc.rest.SessionID = -1
+		sc.rest.TokenAccessor.SetTokens("", "", -1)
 		code, err := strconv.Atoi(respd.Code)
 		if err != nil {
 			code = -1
@@ -368,9 +366,7 @@ func authenticate(
 		}
 	}
 	logger.Info("Authentication SUCCESS")
-	sc.rest.Token = respd.Data.Token
-	sc.rest.MasterToken = respd.Data.MasterToken
-	sc.rest.SessionID = respd.Data.SessionID
+	sc.rest.TokenAccessor.SetTokens(respd.Data.Token, respd.Data.MasterToken, respd.Data.SessionID)
 	return &respd.Data, nil
 }
 
