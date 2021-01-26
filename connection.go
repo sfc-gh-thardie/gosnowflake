@@ -582,6 +582,15 @@ func isAsyncMode(ctx context.Context) (bool, error) {
 	return boolVal, nil
 }
 
+func getQueryIDChan(ctx context.Context) chan<- string {
+	v := ctx.Value(QueryIDChan)
+	if v == nil {
+		return nil
+	}
+	c, _ := v.(chan<- string)
+	return c
+}
+
 func populateChunkDownloader(ctx context.Context, sc *snowflakeConn, data execResponseData) *snowflakeChunkDownloader {
 	return &snowflakeChunkDownloader{
 		sc:                 sc,

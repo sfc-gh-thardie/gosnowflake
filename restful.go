@@ -201,6 +201,12 @@ func postRestfulQueryHelper(
 			return sr.FuncPostQuery(ctx, sr, params, headers, body, timeout, requestID)
 		}
 
+		if queryIDChan := getQueryIDChan(ctx); queryIDChan != nil {
+			queryIDChan <- respd.Data.QueryID
+			close(queryIDChan)
+			ctx = WithQueryIDChan(ctx, nil)
+		}
+
 		var resultURL string
 		isSessionRenewed := false
 		noResult, _ := isAsyncMode(ctx)
@@ -490,7 +496,6 @@ func getAsync(
 		if respd.Success {
 			res.affectedRows, _ = updateRows(respd.Data)
 			res.insertID = -1
-			res.queryID = respd.Data.QueryID
 			res.statusChannel <- QueryStatusComplete // mark exec status complete
 		} else {
 			res.statusChannel <- QueryFailed
@@ -519,7 +524,6 @@ func getAsync(
 					RowSetBase64: respd.Data.RowSetBase64,
 				},
 			}
-			rows.queryID = respd.Data.QueryID
 			rows.ChunkDownloader.start()
 			rows.statusChannel <- QueryStatusComplete // mark query status complete
 		} else {
